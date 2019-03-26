@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableToPanel", "TableToPanel\TableToPanel.csproj", "{C8A46E78-809F-42A8-A6E8-39CF7D53E09F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C8A46E78-809F-42A8-A6E8-39CF7D53E09F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A46E78-809F-42A8-A6E8-39CF7D53E09F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A46E78-809F-42A8-A6E8-39CF7D53E09F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A46E78-809F-42A8-A6E8-39CF7D53E09F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B1A92AA5-E867-4AD6-86EE-52FDFA3D2A64}
+	EndGlobalSection
+EndGlobal
