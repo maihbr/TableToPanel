@@ -14,7 +14,7 @@ TableToPanelJS = (function () {
     var _plantillas = [
         "<div class=\"panel panel-default\"><div class=\"panel-heading\"><h4 class=\"text-primary\" runat=\"server\" id=\"Htmlh4Panel\">{{{heading}}}<h4></div><div class=\"panel-body\">{{{body}}}</div><div class=\"panel-footer\">{{{footer}}}</div></div>",
         "<div class=\"col-lg-{{{col}}} col-md-{{{col}}} col-sm-12 col-xs-12\"><div class=\"form-group\">{{{contenido}}}</div></div>",
-        "<label id='HtmlLbl{{id}}' runat=\"server\">{{{etiqueta}}}</label>"
+        "<label id=\"HtmlLbl{{id}}\" runat=\"server\">{{{etiqueta}}}</label>"
     ];
 
     var _ContenidoPanelBody = "";
@@ -26,7 +26,7 @@ TableToPanelJS = (function () {
     
     var CreateElemts=function(pe_Elemento,pe_plantillaMustache,pe_intAnchoColumna) {
 
-                console.log("CreateElements");
+               
 
                 var vl_strSalida = "";
                 var vista = { "col": 3,"contenido":""}
@@ -39,7 +39,9 @@ TableToPanelJS = (function () {
                 $(pe_Elemento).each(function (indice, elemento) {
 
                     var contenido = ($(elemento)[0].innerHTML);
-                    
+
+                   
+
                     if (indice % 2 == 0) {
                         if (!TieneTaglabel(contenido)) {
                             
@@ -55,7 +57,7 @@ TableToPanelJS = (function () {
                         vl_indiceElemento++;
 
                     } else {
-                       // console.log("Indice=" + indice + " es Control " + contenido);                           
+                                             
 
                         if (TieneClaseCss(contenido)) {
                             vl_snippet+= ReemplazarClase(contenido, "form-control")+ " ";
@@ -151,16 +153,29 @@ TableToPanelJS = (function () {
             vl_strId = vl_arrResultado[1];
         }
 
-        if (vl_strId != null) {           
-            if (/^(txt|ddl|chk)/i.test(vl_strId)) {
-                vl_strSalida = vl_strId.slice(3);                
+        if (vl_strId != null) {
+            if (/^(txt|ddl|chk|rbl)/i.test(vl_strId)) {
+                vl_strSalida = vl_strId.slice(3);
             }
+        } else {
+            vl_strSalida = vl_strId;
         }
         
         return vl_strSalida;
     }
 
+    var ExistenBotones = function (pe_elemento) {
+        
+        const regex = /(asp:Button|submit|button)/gmi;
+        var vl_boolSalida = false;       
 
+        if ((vl_arrResultado = regex.exec($(pe_elemento).html())) !== null) {
+            vl_boolSalida = true;
+        }
+        
+        return vl_boolSalida;
+        
+    }
 
     return {
 
@@ -182,14 +197,8 @@ TableToPanelJS = (function () {
             //Tiene Pie (Botonera en la última fila)        
 
             var ultimaFila = _tabla.find("tr")[_intNumTotalFilas - 1];
-            
-            vl_boolHayBotonesEnUltimaFila = ($(ultimaFila).find('input[type="submit"]').length > 0 ||
-                                             $(ultimaFila).find('input[type="button"]').length > 0 ||
-                                             $(ultimaFila).find('button').length > 0
-                                            ) ? true : false;
-                                           
-                                          
-                                          
+                                                     
+            vl_boolHayBotonesEnUltimaFila = ExistenBotones(ultimaFila);                             
 
             if ((_tabla.find("tfoot").length == 1 && vl_boolHayBotonesEnUltimaFila) ||
                 (_tabla.find("tfoot").length == 0 && vl_boolHayBotonesEnUltimaFila)) {
@@ -197,24 +206,24 @@ TableToPanelJS = (function () {
             }
 
             //Extraer Contenidos
-            _filasContenidos = $(_tabla).find("tr").slice(intPosInicialContenidos, intPosFinalContenidos);
 
+            if (intPosInicialContenidos < intPosFinalContenidos)
+                _filasContenidos = $(_tabla).find("tr").slice(intPosInicialContenidos, intPosFinalContenidos);
+            else
+                _filasContenidos = $(ObtenerFila(intPosFinalContenidos));
+            
             console.log("_tieneCabecera : " + _tieneCabecera);
             console.log("boolHayBotonesEnUltimaFila : " + vl_boolHayBotonesEnUltimaFila);
             console.log("intPosInicialContenidos : " + intPosInicialContenidos);
             console.log("intPosFinalContenidos : " + intPosFinalContenidos);
-            console.log(_filasContenidos);
+            console.log($(_filasContenidos).html());
 
         },
 
         CreatePanel: function () {
-
-            console.log("CreatePanel");
-            console.log($(_filasContenidos).length);
-
-            var vl_strMensaje = "";
            
-
+            var vl_strMensaje = "";
+                      
             _filasContenidos.each(function (index, elemento) {       
 
                 var vl_anchoColumnaPanel = Math.ceil(_colsBootstrap / $(this).find("td").length);
