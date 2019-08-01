@@ -12,7 +12,7 @@ TableToPanelJS = (function () {
     var vl_boolHayBotonesEnUltimaFila = false;
 
     var _plantillas = [
-        "<div class=\"panel panel-default\"><div class=\"panel-heading\"><h4 class=\"text-primary\" runat=\"server\" id=\"Htmlh4Panel\">{{{heading}}}<h4></div><div class=\"panel-body\">{{{body}}}</div><div class=\"panel-footer\">{{{footer}}}</div></div>",
+        "<div class=\"panel panel-default\"><div class=\"panel-heading\"><h4 class=\"text-primary\" runat=\"server\" id=\"Htmlh4Panel\">{{{heading}}}</h4></div><div class=\"panel-body\">{{{body}}}</div><div class=\"panel-footer\">{{{footer}}}</div></div>",
         "<div class=\"col-lg-{{{col}}} col-md-{{{col}}} col-sm-12 col-xs-12\"><div class=\"form-group\">{{{contenido}}}</div></div>",
         "<label id=\"HtmlLbl{{id}}\" runat=\"server\">{{{etiqueta}}}</label>"
     ];
@@ -157,6 +157,11 @@ TableToPanelJS = (function () {
             if (/^(txt|ddl|chk|rbl)/i.test(vl_strId)) {
                 vl_strSalida = vl_strId.slice(3);
             }
+
+            if (/^(uc)/i.test(vl_strId)) {
+                vl_strSalida = vl_strId.slice(2);
+            }
+
         } else {
             vl_strSalida = vl_strId;
         }
@@ -200,23 +205,34 @@ TableToPanelJS = (function () {
                                                      
             vl_boolHayBotonesEnUltimaFila = ExistenBotones(ultimaFila);                             
 
-            if ((_tabla.find("tfoot").length == 1 && vl_boolHayBotonesEnUltimaFila) ||
+            /*if ((_tabla.find("tfoot").length == 1 && vl_boolHayBotonesEnUltimaFila) ||
                 (_tabla.find("tfoot").length == 0 && vl_boolHayBotonesEnUltimaFila)) {
                 intPosFinalContenidos--;
+            }*/
+
+            if (!vl_boolHayBotonesEnUltimaFila) {
+                intPosFinalContenidos++;
             }
 
             //Extraer Contenidos
 
-            if (intPosInicialContenidos < intPosFinalContenidos)
+            if (intPosInicialContenidos != intPosFinalContenidos) {
+
+                
                 _filasContenidos = $(_tabla).find("tr").slice(intPosInicialContenidos, intPosFinalContenidos);
-            else
+
+                
+
+            } else {
                 _filasContenidos = $(ObtenerFila(intPosFinalContenidos));
+            }
+                
             
             console.log("_tieneCabecera : " + _tieneCabecera);
             console.log("boolHayBotonesEnUltimaFila : " + vl_boolHayBotonesEnUltimaFila);
             console.log("intPosInicialContenidos : " + intPosInicialContenidos);
             console.log("intPosFinalContenidos : " + intPosFinalContenidos);
-            console.log($(_filasContenidos).html());
+           
 
         },
 
@@ -225,12 +241,12 @@ TableToPanelJS = (function () {
             var vl_strMensaje = "";
                       
             _filasContenidos.each(function (index, elemento) {       
-
+               
                 var vl_anchoColumnaPanel = Math.ceil(_colsBootstrap / $(this).find("td").length);
 
                 if ($(this).find("td").length % 2 == 0) {
                     _ContenidoPanelBody += CreateElemts($(this).find("td"), _plantillas[1], vl_anchoColumnaPanel);
-                } else {
+                } else {                    
                     vl_strMensaje += "Fila :" + index + " Mal Formada<br>";
                 }              
 
