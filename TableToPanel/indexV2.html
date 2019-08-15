@@ -75,13 +75,14 @@
     <script src="JS/jquery-2.1.3.min.js"></script>
     <script src="JS/mustache301.min.js"></script>
     <script src="JS/beautify-html190.js"></script>
-    <script src="JS/TableToPanelJS.js"></script>
+    <script src="JS/PaginacionJS.js"></script>
+    <script src="JS/AppJS.js"></script>
 
     <script type="text/javascript">
 
         $("#btnTrasformar").click(function (e) {
-            TableToPanelJS.init($("#txtOrigen").val());
-            TableToPanelJS.CreatePanel();
+            AppJS.init($("#txtOrigen").val());
+            AppJS.CreatePanel();
         });
 
     </script>

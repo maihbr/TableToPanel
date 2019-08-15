@@ -67,16 +67,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="default.aspx.designer.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="default.aspx" />
     <Content Include="indexV2.html" />
     <Content Include="index.html" />
     <Content Include="JS\beautify-html190.js" />
     <Content Include="JS\jquery-2.1.3.min.js" />
     <Content Include="JS\mustache301.min.js" />
-    <Content Include="JS\TableToPanelJS.js" />
-    <Content Include="kk.html" />
+    <Content Include="JS\PaginacionJS.js" />
+    <Content Include="JS\AppJS.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSS\" />
