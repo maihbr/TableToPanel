@@ -1,6 +1,6 @@
 ﻿/*=========================================================================
- * Campos especiales sin columna para el label ( Asp:ValidationSummary )
- * Si hay un DataGridView, TextBox sin Etiqueta
+ * Campos especiales sin columna para el label ( Asp:ValidationSummary, DataGridView, TextBox sin Etiqueta )
+ * Que pasa con los campos ocultos.
  ==========================================================================*/
 
 AppJS = (function () {
@@ -28,7 +28,7 @@ AppJS = (function () {
         "<telerik: RadDatePicker RenderMode=\"Lightweight\" ID=\"txt{{{id}}}\" Width=\"100%\" Skin=\"Bootstrap\" runat =\"server\" MinDate=\"1/1/1900\" MaxDate=\"12/31/2999\" Enabled=\"False\" />",
         "<div class=\"table table-responsive\">{{{DataGridView}}}</div>",
         "<label id=\"{{id}}\" runat=\"server\">{{{etiqueta}}}</label>",
-
+        "PagerStyle-CssClass=\"bs-pagination\" CssClass=\"table table-hover\" GridLines=\"None\" "
     ];
 
     var _ContenidoPanelBody = "";
@@ -39,18 +39,17 @@ AppJS = (function () {
 
     //Metodos Privados
     
-    var CreateElemts=function(pe_Elemento,pe_plantillaMustache,pe_intAnchoColumna) {
+    var CreateElemts=function(pe_Elemento,pe_plantillaMustache,pe_intAnchoColumna,pe_boolElementoConLabel=true) {
                 
-                var vista = { "col": _sizeColBs,"contenido":""}
-                var vistaEtiqueta = { "etiqueta": "" };
-        
+                var vista = { "col": pe_intAnchoColumna, "contenido": "" }
+                var vistaEtiqueta = { "etiqueta": "" };        
                 var vl_snippet = "";
                 var vl_indiceElemento = -1;
 
                 $(pe_Elemento).each(function (indice, elemento) {
 
                     var contenido = ($(elemento)[0].innerHTML);
-
+                    
                     if (indice % 2 == 0) {
                         if (!TieneTaglabel(contenido)) {                           
                             var vl_strIdColumna = ObteneIdInput($(pe_Elemento[indice + 1])[0].innerHTML);
@@ -89,6 +88,8 @@ AppJS = (function () {
                         vl_indiceElemento++;
 
                     } else {
+
+
                                              
                         //===== Remplazar ciertos controles  por controles de telerik =======
 
@@ -357,13 +358,14 @@ AppJS = (function () {
             var vl_strMensaje = "";
                       
             _filasContenidos.each(function (index, elemento) {       
-               
-                var vl_anchoColumnaPanel = Math.ceil(_colsBootstrap / $(this).find("td").length);
 
-                if ($(this).find("td").length % 2 == 0) {                    
-                   CreateElemts($(this).find("td"), _plantillas[1], vl_anchoColumnaPanel);                  
+                _sizeColBs = $("#HtmlTxtSizeCol").val();
+
+                if ($(this).find("td").length % 2 == 0) {                               
+                    CreateElemts($(this).find("td"), _plantillas[1],_sizeColBs);                  
                 } else {                    
                     vl_strMensaje += "Row :" + index + " Bad Format<br>";                    
+                    //CreateElemts($(this).find("td"), _plantillas[1], _sizeColBs,false);
                 }              
 
             });
@@ -415,36 +417,20 @@ AppJS = (function () {
             
             //Esperimental  
 
-            var intTamRow = 0;
-
-            if (_arrCols.length <= _sizeColBs) {
-                intTamRow = _sizeColBs;
-            } else {
-                intTamRow = Math.ceil(_arrCols.length / _sizeColBs);
-            }
-
+            var intTamRow = Math.ceil(_colsBootstrap / _sizeColBs);            
             PaginacionJS.Init(_arrCols, intTamRow);       
 
             for (i = 1; i <= PaginacionJS.Get("total_pages"); i++) {
-
                 var vl_Pagina = PaginacionJS.Pagina(i);
-                var vl_Data = { "cols": vl_Pagina };
-
-               /* console.log(vl_Pagina);
-                console.log(vl_Data);
-                console.log(_plantillas[3]);
-                console.log(vl_Data);
-                console.log(_ContenidoPanelBody);*/
-
+                var vl_Data = { "cols": vl_Pagina };              
                 _ContenidoPanelBody+= Mustache.render(_plantillas[3], vl_Data);
-
             }
             
             //Fin Esperimental
 
 
             _DataPanel.heading  = _ContenidoPanelHeader;
-            _DataPanel.body     = _ContenidoPanelBody.replace(',','');
+            _DataPanel.body     = _ContenidoPanelBody.replace(',',' ');
             _DataPanel.footer   = _ContenidoPanelFooter;
 
             $("#txtDestino").val(html_beautify(Mustache.render(_plantillas[0], _DataPanel)));

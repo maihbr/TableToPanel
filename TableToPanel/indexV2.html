@@ -20,11 +20,7 @@
     </nav>
 
     <form>
-
         <div class="container-fluid">
-
-
-            <p>&nbsp;</p>
 
             <div class="row">
                 <div class="col-lg-12">
@@ -32,29 +28,45 @@
                 </div>
             </div>
 
-            <p><br />Convert a table into a Bootstrap panel V2</p>
-            <p>&nbsp;</p>
+            <div class="panel panel-default">
 
-            <div class="row">
-                <div class="col-lg-12 text-center">
+                <div class="panel-heading">
+                    <h4 class="text-primary">Settings</h4>
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="row">
+
+                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 form-group">
+                            <label id="HtmlLblSizeCol" runat="server">Size Col</label>
+                            <input type="number" runat="server" id="HtmlTxtSizeCol" class="form-control" min="1" max="12" value="3" required />
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <textarea id="txtOrigen" class="form-control" cols="60" placeholder="insert html table code"></textarea>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <textarea id="txtDestino" class="form-control" cols="60"></textarea>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel-footer">
                     <input type="button" id="btnTrasformar" value="Convert" class="btn btn-primary" />
-                    <input type="reset" id="btnResetear" value="Reset" class="btn btn-dark" />
+                    <input type="reset" id="btnResetear" value="Reset" class="btn btn-default" />
                 </div>
+
             </div>
-
-            <p>&nbsp</p>
-
-            <div class="row">
-                <div class="col-lg-6">
-                    <textarea id="txtOrigen" class="form-control" cols="60" placeholder="insert html table code"></textarea>
-                </div>
-
-                <div class="col-lg-6">
-                    <textarea id="txtDestino" class="form-control" cols="60"></textarea>
-                </div>
-            </div>
-
-
+            
         </div>
     </form>
 
@@ -80,10 +92,27 @@
 
     <script type="text/javascript">
 
+        //function validar() {
+        //    let vl_boolSalida = false;
+
+        //    let vl_intSizeCol = parseInt($("#HtmlLblSizeCol").val());
+
+        //    if (vl_intSizeCol >= 1 && vl_intSizeCol <=12) {
+
+        //        vl_boolSalida = true;
+        //    } 
+           
+        //    return vl_boolSalida
+        //}
+
+
         $("#btnTrasformar").click(function (e) {
             AppJS.init($("#txtOrigen").val());
             AppJS.CreatePanel();
         });
+
+        
+        
 
     </script>
 
