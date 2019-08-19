@@ -1,5 +1,8 @@
 ﻿/*=========================================================================
- * Campos especiales sin columna para el label ( Asp:ValidationSummary, DataGridView, TextBox sin Etiqueta )
+ * El ValidatorSummary Debe ir en una fila independiente. (*)
+  * Campos especiales sin columna para el label ( falta probar TextBox sin Etiqueta )
+ * Ultilizar bootstrapt 3 o la clase cart de bootstrap 4
+ * Revisar el fragmento de codigo Optimizar
  * Que pasa con los campos ocultos.
  ==========================================================================*/
 
@@ -15,7 +18,7 @@ AppJS = (function () {
     var vl_boolHayBotonesEnUltimaFila = false;
     var _arrCols = [];
     var _sizeColBs = 3;
-
+    const DataGridViewBS = " PagerStyle-CssClass=\"bs-pagination\" CssClass=\"table table-hover\" GridLines=\"None\" >";
     
 
     var _plantillas = [
@@ -28,7 +31,7 @@ AppJS = (function () {
         "<telerik: RadDatePicker RenderMode=\"Lightweight\" ID=\"txt{{{id}}}\" Width=\"100%\" Skin=\"Bootstrap\" runat =\"server\" MinDate=\"1/1/1900\" MaxDate=\"12/31/2999\" Enabled=\"False\" />",
         "<div class=\"table table-responsive\">{{{DataGridView}}}</div>",
         "<label id=\"{{id}}\" runat=\"server\">{{{etiqueta}}}</label>",
-        "PagerStyle-CssClass=\"bs-pagination\" CssClass=\"table table-hover\" GridLines=\"None\" "
+        "{{{webcontrol}}}"
     ];
 
     var _ContenidoPanelBody = "";
@@ -44,13 +47,13 @@ AppJS = (function () {
                 var vista = { "col": pe_intAnchoColumna, "contenido": "" }
                 var vistaEtiqueta = { "etiqueta": "" };        
                 var vl_snippet = "";
-                var vl_indiceElemento = -1;
+                var vl_indiceElemento = (pe_boolElementoConLabel)? -1:0;
 
                 $(pe_Elemento).each(function (indice, elemento) {
 
                     var contenido = ($(elemento)[0].innerHTML);
                     
-                    if (indice % 2 == 0) {
+                    if (indice % 2 == 0 && pe_boolElementoConLabel) {
                         if (!TieneTaglabel(contenido)) {                           
                             var vl_strIdColumna = ObteneIdInput($(pe_Elemento[indice + 1])[0].innerHTML);
                             vistaEtiqueta.id = vl_strIdColumna;
@@ -88,9 +91,7 @@ AppJS = (function () {
                         vl_indiceElemento++;
 
                     } else {
-
-
-                                             
+                                                                     
                         //===== Remplazar ciertos controles  por controles de telerik =======
 
                         var vl_arrControles = [];
@@ -110,6 +111,8 @@ AppJS = (function () {
                             });
                         }
 
+                        
+
                         //Comprobamos si existen controles calendario,localizadorBasico
 
                         var vl_boolHayCalendario = vl_arrControles.some(item => {                           
@@ -119,6 +122,10 @@ AppJS = (function () {
                         var vl_boolHayLocalizador = vl_arrControles.some(item => {
                             return (item.toLowerCase().indexOf(":localizadorbasico") > -1) ? true : false 
                         });
+
+                        var vl_boolHayValidationSummary = ExisteWebControl(vl_arrControles, "ValidationSummary");
+
+                        var vl_boolHayGridView = ExisteWebControl(vl_arrControles, "GridView");
 
                         if (vl_boolHayCalendario) {
 
@@ -141,7 +148,7 @@ AppJS = (function () {
                                         } else {
                                             vl_snippet += item;
                                         }
-                                       
+
                                         break;
                                     case "requiredfieldvalidator":
                                         vl_snippet += item;
@@ -149,7 +156,7 @@ AppJS = (function () {
                                     case "calendarextender":
                                         vl_snippet += "<!--" + item + "-->";
                                         break;
-                                   
+
                                 }
                             });
 
@@ -163,6 +170,19 @@ AppJS = (function () {
 
                             vl_snippet += "<!--" + contenido + "-->";
                             vl_snippet += Mustache.render(_plantillas[5], vl_DataRadComboBox);
+
+                        } else if (vl_boolHayValidationSummary) {
+
+                            vl_arrControles.forEach(item => {
+                                vl_snippet += item;
+                            });
+                                                        
+                        } else if (vl_boolHayGridView) {
+
+                            var vl_DataGrid = { "DataGridView": "" };
+                            var vl_strGridView = /<.+><\/.+>/gmi.exec(contenido).input;                            
+                            vl_DataGrid.DataGridView = vl_strGridView.replace(/>/im, DataGridViewBS);
+                            vl_snippet += Mustache.render(_plantillas[7], vl_DataGrid);                            
 
                         } else {
 
@@ -181,8 +201,11 @@ AppJS = (function () {
 
                     if (vl_indiceElemento == 1) {
                         vista.contenido = vl_snippet;
+                        if (vl_boolHayValidationSummary) {
+                            vista.col = 12;
+                        }
                         _arrCols.push(Mustache.render(pe_plantillaMustache, vista));                        
-                        vl_indiceElemento = -1;
+                        vl_indiceElemento = (pe_boolElementoConLabel)?-1:0;
                     }
 
                 });
@@ -309,6 +332,19 @@ AppJS = (function () {
         
     }
 
+    var ExisteWebControl = function (pe_arrElementos,pe_strWebControl) {
+
+        var vl_boolSalida = false;
+
+        vl_boolSalida = pe_arrElementos.some(item => {            
+            return (item.toLowerCase().indexOf((":" + pe_strWebControl).toLowerCase()) > -1) ? true : false
+        });
+        return vl_boolSalida;        
+    }
+
+
+    
+
     return {
 
         init: function (item) {
@@ -361,12 +397,16 @@ AppJS = (function () {
 
                 _sizeColBs = $("#HtmlTxtSizeCol").val();
 
+                //Optimizar.
+
                 if ($(this).find("td").length % 2 == 0) {                               
                     CreateElemts($(this).find("td"), _plantillas[1],_sizeColBs);                  
                 } else {                    
                     vl_strMensaje += "Row :" + index + " Bad Format<br>";                    
-                    //CreateElemts($(this).find("td"), _plantillas[1], _sizeColBs,false);
-                }              
+                    CreateElemts($(this).find("td"), _plantillas[1], _sizeColBs,false);
+                }     
+
+                //Fin Optimizar.
 
             });
 
@@ -414,8 +454,30 @@ AppJS = (function () {
                 
             }
 
-            
-            //Esperimental  
+
+            //Experimental ( Tratar el array si hay un elemento ValidationSummary)
+            var vl_strRowValidationSummary = "";
+            var vl_intIndice = _arrCols.findIndex((item, index) => {
+
+                var vl_intSalida = 0;
+
+                if (/ValidationSummary/i.test(item)) {
+                    vl_intSalida = index;
+                }
+
+                return vl_intSalida;
+
+            });
+
+            if (vl_intIndice > -1) {
+                vl_strRowValidationSummary = _arrCols[vl_intIndice];
+                _arrCols = _arrCols.filter((item, index) => {
+                    return index != indice;
+                });                                
+            }
+
+            //Fin Esperimental
+
 
             var intTamRow = Math.ceil(_colsBootstrap / _sizeColBs);            
             PaginacionJS.Init(_arrCols, intTamRow);       
@@ -426,11 +488,8 @@ AppJS = (function () {
                 _ContenidoPanelBody+= Mustache.render(_plantillas[3], vl_Data);
             }
             
-            //Fin Esperimental
-
-
             _DataPanel.heading  = _ContenidoPanelHeader;
-            _DataPanel.body     = _ContenidoPanelBody.replace(',',' ');
+            _DataPanel.body     =  vl_strRowValidationSummary +  _ContenidoPanelBody.replace(',',' ');
             _DataPanel.footer   = _ContenidoPanelFooter;
 
             $("#txtDestino").val(html_beautify(Mustache.render(_plantillas[0], _DataPanel)));

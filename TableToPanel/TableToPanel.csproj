@@ -79,7 +79,6 @@
   <ItemGroup>
     <Content Include="default.aspx" />
     <Content Include="indexV2.html" />
-    <Content Include="index.html" />
     <Content Include="JS\beautify-html190.js" />
     <Content Include="JS\jquery-2.1.3.min.js" />
     <Content Include="JS\mustache301.min.js" />
