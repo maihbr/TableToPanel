@@ -1,7 +1,7 @@
 ﻿/*=========================================================================
- * El ValidatorSummary Debe ir en una fila independiente. (*)
-  * Campos especiales sin columna para el label ( falta probar TextBox sin Etiqueta )
- * Ultilizar bootstrapt 3 o la clase cart de bootstrap 4
+ * El ValidatorSummary Debe ir en una fila independiente. (OK)
+ * Ultilizar bootstrapt 3 o la clase cart de bootstrap 4 (OK)
+ * Campos especiales sin columna para el label ( falta probar TextBox sin Etiqueta )
  * Revisar el fragmento de codigo Optimizar
  * Que pasa con los campos ocultos.
  ==========================================================================*/
@@ -181,7 +181,7 @@ AppJS = (function () {
 
                             var vl_DataGrid = { "DataGridView": "" };
                             var vl_strGridView = /<.+><\/.+>/gmi.exec(contenido).input;                            
-                            vl_DataGrid.DataGridView = vl_strGridView.replace(/>/im, DataGridViewBS);
+                            vl_DataGrid.DataGridView = vl_strGridView.replace(/>/im, DataGridViewBS).replace(/skinid="[^\"]{1,}"/im," ");
                             vl_snippet += Mustache.render(_plantillas[7], vl_DataGrid);                            
 
                         } else {
